@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PHP_APCU
-	bool "php-apcu"
-	help
-	  APCu is an in-memory key-value store for PHP.
-
-	  https://pecl.php.net/package/APCu
