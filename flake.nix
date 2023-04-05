@@ -5,9 +5,13 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     nix-filter.url = "github:numtide/nix-filter";
     flake-utils.url = "github:numtide/flake-utils";
+    turing_pi = {
+      url = "./bmc4tpi";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, rust-overlay, nix-filter }:
+  outputs = { self, nixpkgs, flake-utils, rust-overlay, nix-filter, turing_pi }:
     let 
     system = "x86_64-linux";
   pkgs = import nixpkgs {
@@ -17,64 +21,51 @@
     with pkgs;
   {
     packages."x86_64-linux" =rec { 
-      turing_pi = stdenv.mkDerivation {
-        name = "turing_pi";
-        version = "0.0.1";
-        __noChroot = true;
-        src = ./.;
-        dontConfigure = true;
-        installPhase = ''
-          # this package does not have any artifacts as it used as a source
-          # input for the buildroot derivation.
-          cp -r . $out
-          '';
-      };
 
-      buildroot = stdenv.mkDerivation {
-        name = "buildroot";
-        src = fetchzip {
-          url = "https://buildroot.org/downloads/buildroot-2022.02.1.tar.gz";
-          sha256 =
-            "sha256-J6MS6+UHeRU95Np3PIZOiG5bHJgogLaB0BbhqC/RkTQ=";
+      cross_compiler = callPackage ./gcc_linaro.nix {};
+
+      kernel_image = stdenvNoCC.mkDerivation {
+        name = "linux 5.4 100ask_t113-pro";
+        src = fetchgit {
+          url =
+            "https://e.coding.net/weidongshan/100ask_t113-pro/linux-5.4.git";
+          rev =
+            "5112fdd843715f1615703ca5ce2a06c1abe5f9ee";
+          sha256= "sha256-Tk+NOASjEMfxZhu0Q6/9/M5K4hHskEoO7VA2y5LCdUk=";
         };
 
         nativeBuildInputs = [ 
-          turing_pi 
-          which 
+          cross_compiler
+          gcc11
+          flex
+          bison
           coreutils
-          perl 
-          unzip
-          file
-          rsync
-          cpio
-          git
+          libelf
           bc
-          wget
-          flock
+          autoPatchelfHook
+        ];
+
+        makeFlags = [
+          "ARCH=arm"
+          "CROSS_COMPILE=arm-linux-gnueabi-"
         ];
 
        configurePhase = ''
-         cp ${turing_pi.src}/.config . 
+          patchShebangs scripts/* 
          '';
 
-        makeFlags = [
-            "BR2_EXTERNAL=${turing_pi.out}/br2t113pro"
-        ];
+       buildPhase = ''
+         cp ${turing_pi}/config/kernelconfig .config
+         make $makeFlags oldconfig
+         make $makeFlags V=1 -j$NIX_BUILD_CORES
+         '';
 
-        buildPhase = ''
-           file support/scripts/br2-external
-           patchShebangs support/scripts/br2-external
-           patchShebangs support/dependencies/dependencies.sh
-           patchShebangs support/scripts/*
-           patchShebangs support/download/*
-           make $makeFlags 100ask_t113-pro_spinand_core_defconfig
-         cp ${turing_pi.src}/.config . 
-         make V=1
-          '';
-      dontInstall=true;
+        installPhase = ''cp -R . $out '';
+        dontFixup = true;
+        dontStrip = true;
       };
 
-      default = buildroot;
+      default = kernel_image;
     };
 
     devShells."x86_64-linux" = {

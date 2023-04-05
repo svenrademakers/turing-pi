@@ -82,7 +82,8 @@
         "flake-utils": "flake-utils",
         "nix-filter": "nix-filter",
         "nixpkgs": "nixpkgs",
-        "rust-overlay": "rust-overlay"
+        "rust-overlay": "rust-overlay",
+        "turing_pi": "turing_pi"
       }
     },
     "rust-overlay": {
@@ -102,6 +103,19 @@
         "owner": "oxalica",
         "repo": "rust-overlay",
         "type": "github"
+      }
+    },
+    "turing_pi": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-AIaRjqqKeIAT2FNZg8yBiqN/dbuxfC/TeH1kZLxa7E0=",
+        "path": "/nix/store/9wvgx41fg0nscl6i9f5bji6qazbkihn5-source/bmc4tpi",
+        "type": "path"
+      },
+      "original": {
+        "path": "/nix/store/9wvgx41fg0nscl6i9f5bji6qazbkihn5-source/bmc4tpi",
+        "type": "path"
       }
     }
   },
