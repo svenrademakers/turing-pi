@@ -110,11 +110,11 @@
       "locked": {
         "lastModified": 1,
         "narHash": "sha256-AIaRjqqKeIAT2FNZg8yBiqN/dbuxfC/TeH1kZLxa7E0=",
-        "path": "/nix/store/9wvgx41fg0nscl6i9f5bji6qazbkihn5-source/bmc4tpi",
+        "path": "/nix/store/y9cgg89dllcpsrmzig7vc0imnq8r8x64-source/bmc4tpi",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/9wvgx41fg0nscl6i9f5bji6qazbkihn5-source/bmc4tpi",
+        "path": "/nix/store/y9cgg89dllcpsrmzig7vc0imnq8r8x64-source/bmc4tpi",
         "type": "path"
       }
     }
